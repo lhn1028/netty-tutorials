@@ -18,13 +18,14 @@ public class EchoServer {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 1) {
-            System.err.println(
-                    "Usage: " + EchoServer.class.getSimpleName() + "<port>"
-            );
-        }
-
-        int port = Integer.parseInt(args[0]);
+//        if (args.length != 1) {
+//            System.err.println(
+//                    "Usage: " + EchoServer.class.getSimpleName() + "<port>"
+//            );
+//        }
+//
+//        int port = Integer.parseInt(args[0]);
+        int port = 3000;
         new EchoServer(port).start();
     }
 
@@ -32,7 +33,8 @@ public class EchoServer {
         final EchoServerHandler serverHandler = new EchoServerHandler();
         EventLoopGroup group = new NioEventLoopGroup();
         try {
-            ServerBootstrap b = new ServerBootstrap()
+            ServerBootstrap b = new ServerBootstrap();
+            b.group(group)
                     .channel(NioServerSocketChannel.class)
                     .localAddress(new InetSocketAddress(port))
                     .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -41,6 +43,7 @@ public class EchoServer {
                         }
                     });
             ChannelFuture f = b.bind().sync();
+            System.out.println("Server start at: " + this.port);
             f.channel().closeFuture().sync();
         } finally {
             group.shutdownGracefully().sync();
